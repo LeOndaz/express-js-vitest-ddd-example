@@ -1,0 +1,62 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ES2022"
+    ],
+    "typeRoots": [
+      "./src/types",
+      "./node_modules/@types"
+    ],
+    "outDir": "dist",
+    "allowJs": false,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": false,
+    "esModuleInterop": true,
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@auth/*": [
+        "./src/features/auth/*"
+      ],
+      "@db/*": [
+        "./src/db/*"
+      ],
+      "@db/": [
+        "./src/db/db.ts"
+      ],
+      "@events/*": [
+        "./src/features/events/*"
+      ],
+      "@common/*": [
+        "./src/common/*"
+      ],
+      "@env/": [
+        "./src/common/env.ts"
+      ]
+    },
+    "skipLibCheck": true
+  },
+  "include": [
+    "./src/*.ts",
+    "./src/**/*",
+    ".eslintrc.cjs",
+    "./src/types/express/index.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "ts-node": {
+    "esm": true,
+    "require": ["tsconfig-paths/register"]
+  }
+}
