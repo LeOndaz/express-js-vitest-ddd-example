@@ -1,15 +1,14 @@
-FROM node:lts-slim
-  
+FROM --platform=linux/amd64 node:18.18.2-alpine
+ 
 WORKDIR /app
   
 COPY package.json pnpm-lock.yaml ./
-  
+ 
+RUN npm install -g pnpm
 RUN pnpm install
   
 COPY . .
   
-RUN pnpm build
+EXPOSE 8080
   
-EXPOSE 3000
-  
-CMD ["pnpm", "start"]
+CMD ["pnpm", "dev"]

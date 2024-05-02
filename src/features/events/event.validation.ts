@@ -33,3 +33,7 @@ export const createEventSchema = z.object({
   description: z.string().max(500),
   category: z.enum(eventCategories),
 });
+
+export const cancelReservationSchema = z.object({
+  reservationId: z.string(),
+});

@@ -1,16 +1,17 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./:/app
-    depends_on:
-      - redis
-      - database
-    env_file: .env
+#  app:
+#    build: .
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - ./:/app
+#    depends_on:
+#      - redis
+#      - database
+#    env_file: .env
+#    platform: linux/amd64 # to be able to run it on my M1 
 
   redis:
     image: redis:latest

@@ -1,3 +1,5 @@
+/** @type {import('eslint').Linter.Config} */
+
 module.exports = {
   extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   ignorePatterns: ["node_modules/", "dist/"],
@@ -7,6 +9,14 @@ module.exports = {
     ecmaVersion: "latest",
     project: "./tsconfig.json",
   },
+  overrides: [
+    {
+      files: ["./src/testing/*.ts"],
+      rules: {
+        "no-empty-pattern": 0,
+      }
+    }
+  ],
   rules: {
     camelcase: "error",
     eqeqeq: "error",

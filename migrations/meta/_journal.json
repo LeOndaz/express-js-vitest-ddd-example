@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1714570098763,
+      "tag": "0000_reflective_william_stryker",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1714597072358,
+      "tag": "0001_ambiguous_bucky",
+      "breakpoints": true
+    }
+  ]
+}

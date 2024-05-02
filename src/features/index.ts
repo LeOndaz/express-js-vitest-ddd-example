@@ -1,9 +1,9 @@
-import authController from '@auth/auth.controller';
-import eventsController from '@events/events.controller';
+import { router as authRouter } from './auth/auth.controller';
+import { router as eventsRouter } from './events/events.controller';
 import { Router } from 'express';
 
 export const router = Router();
 
 router
-  .use(authController)
-  .use(eventsController);
+  .use(authRouter)
+  .use('/events', eventsRouter);

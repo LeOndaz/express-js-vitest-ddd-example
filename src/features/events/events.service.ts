@@ -1,8 +1,9 @@
-import { CreateEventSchema, eventAttendeesMax, ListEventSchema, ReserveTicketSchema } from '@events/event.validation';
-import { db } from '@db/db';
-import { Event, events } from '@events/models/event';
+import { CreateEventSchema, eventAttendeesMax, ListEventSchema, ReserveTicketSchema } from './/event.validation';
+import { db } from './../../db';
+import { Event, events } from './models/event';
 import { and, between, eq, gte, lte } from 'drizzle-orm';
-import { Reservation, reservations } from '@events/models/reservation';
+import { Reservation, reservations } from './models/reservation';
+import { users } from '../auth/models/user';
 
 interface ReserveTicketOpts {
   userId: string;
@@ -24,8 +25,10 @@ export const getEvents = async (filters: ListEventSchema) => {
   } else if (filters.endDate) {
     dateCondition = lte(events.date, filters.endDate);
   }
-
-  whereConditions.push(dateCondition);
+  
+  if (dateCondition) {
+    whereConditions.push(dateCondition);
+  }
 
   if (filters.name) {
     whereConditions.push(eq(events.name, filters.name));
@@ -37,7 +40,7 @@ export const getEvents = async (filters: ListEventSchema) => {
 
   // TODO: I think drizzle does not support single object response, e.g (no .single() or .one())
   const where = whereConditions.length > 1 ? and(...whereConditions) : whereConditions[0];
-
+  
   return db
     .select({
       id: events.id,
@@ -58,7 +61,7 @@ export const createEvent = async (data: CreateEventSchema): Promise<Event> => {
     .values(data)
     .returning()
     .execute();
-
+  
   return event;
 };
 
@@ -109,4 +112,39 @@ export const getReservation = async (userId:string, eventId: string): Promise<Re
     .execute();
   
   return reservation;
+};
+
+export const getBookedEvents = async (userId: string) => {
+  return db
+    .select({
+      id: events.id,
+      name: events.name,
+      date: events.date,
+      availableAttendeesCount: events.availableAttendeesCount,
+      description: events.description,
+      category: events.category,
+    })
+    .from(events)
+    .leftJoin(reservations, eq(events.id, reservations.eventId))
+    .where(
+      eq(reservations.userId, userId),
+    )
+    .execute();
+};
+
+export const cancelReservation = async (reservationId: string) => {
+  return db
+    .delete(reservations)
+    .where(eq(reservations.id, reservationId))
+    .returning()
+    .execute();
+};
+
+export const getReservations = async () => {
+  return db.
+    select(/* TODO should have the field explicitly */)
+    .from(reservations)
+    .innerJoin(events, eq(reservations.eventId, events.id))
+    .innerJoin(users, eq(reservations.userId, users.id))
+    .execute();
 };

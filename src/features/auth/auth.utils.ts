@@ -1,4 +1,4 @@
-import { User } from '@auth/models/user';
+import { User } from './models/user';
 import bcrypt from 'bcrypt';
 
 export const checkUserPassword = async (user: User, rawPassword: string): Promise<boolean> => {
@@ -6,9 +6,9 @@ export const checkUserPassword = async (user: User, rawPassword: string): Promis
     return false;
   }
   
-  return bcrypt.compare(user.password, rawPassword);
+  return bcrypt.compare(rawPassword, user.password);
 };
 
 export const hashPassword = async (password: string): Promise<string> => {
-  return bcrypt.hash(password, 20); // TODO rounds should be env
+  return bcrypt.hash(password, 10); // TODO rounds should be env
 };

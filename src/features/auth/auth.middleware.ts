@@ -1,33 +1,21 @@
 import { Passport } from 'passport';
-import { ExtractJwt, Strategy, StrategyOptionsWithoutRequest } from 'passport-jwt';
-import { getUserById } from '@auth/auth.service';
-import { env } from '@env/';
+import { Strategy } from 'passport-http-bearer';
+import { validateToken } from './auth.service';
 import { RequestHandler } from 'express';
 
 const passport = new Passport();
 
-const strategyOpts: StrategyOptionsWithoutRequest = {
-  algorithms: ['HS256'],
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  issuer: 'musalasoft.com',
-  secretOrKey: env.JWT_SECRET,
-};
-
-passport.use(new Strategy(strategyOpts, async function (payload, done) {
-  const userId: string = payload.sub;
+passport.use(new Strategy(async function (token, done) {
   let user;
 
   try {
-    user = await getUserById(userId);
+    user = await validateToken(token);
   } catch (e) {
-    return done(null, false);
-  }
-
-  if (!user) {
-    return done(null, false);
+    done(new Error('invalid token'), false);
+    return;
   }
 
   return done(null, user);
 }));
 
-export const isAuthenticated: RequestHandler = passport.authenticate('jwt', { session: false });
+export const isAuthenticated: RequestHandler = passport.authenticate('bearer', { session: false });

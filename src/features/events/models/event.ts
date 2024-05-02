@@ -1,7 +1,7 @@
 import { pgTable, date, varchar, pgEnum, smallint } from 'drizzle-orm/pg-core';
-import { nanoId } from '@db/fields/nanoId';
+import { nanoId } from '../../../db/fields/nanoId';
 
-const categoryEnum = pgEnum('category_enum', ['concert', 'conference', 'game']);
+export const categoryEnum = pgEnum('category_enum', ['concert', 'conference', 'game']);
 
 export const events = pgTable('events', {
   id: nanoId('id').primaryKey(),

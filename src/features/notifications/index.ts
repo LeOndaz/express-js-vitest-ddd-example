@@ -1,0 +1,1 @@
+export { notificationsQueue } from './worker';

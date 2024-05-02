@@ -4,19 +4,20 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "ES2022"
+      "ESNext"
     ],
     "typeRoots": [
       "./src/types",
       "./node_modules/@types"
     ],
+    "types": ["vitest/globals"],
     "outDir": "dist",
     "allowJs": false,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": false,
     "esModuleInterop": true,
-    "module": "ES2022",
+    "module": "ESNext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -24,32 +25,33 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@auth/*": [
-        "./src/features/auth/*"
-      ],
-      "@db/*": [
-        "./src/db/*"
-      ],
-      "@db/": [
-        "./src/db/db.ts"
-      ],
-      "@events/*": [
-        "./src/features/events/*"
-      ],
-      "@common/*": [
-        "./src/common/*"
-      ],
-      "@env/": [
-        "./src/common/env.ts"
-      ]
+//      "@auth/*": [
+//        "./src/features/auth/*"
+//      ],
+//      "@db/*": [
+//        "./src/db/*"
+//      ],
+//      "@db/": [
+//        "./src/db/db.ts"
+//      ],
+//      "@events/*": [
+//        "./src/features/events/*"
+//      ],
+//      "@common/*": [
+//        "./src/common/*"
+//      ],
+//      "@env/": [
+//        "./src/common/env.ts"
+//      ]
     },
     "skipLibCheck": true
   },
   "include": [
     "./src/*.ts",
     "./src/**/*",
+    "./src/types/global.d.ts",
     ".eslintrc.cjs",
-    "./src/types/express/index.d.ts"
+    ".",
   ],
   "exclude": [
     "node_modules",
@@ -57,6 +59,8 @@
   ],
   "ts-node": {
     "esm": true,
-    "require": ["tsconfig-paths/register"]
+    "experimentalSpecifierResolution": "node",
+    "require": ["tsconfig-paths/register"], // TODO for some reason, this is not working
+    "files": true,
   }
 }

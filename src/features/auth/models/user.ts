@@ -1,5 +1,5 @@
 import { index, pgTable, varchar } from 'drizzle-orm/pg-core';
-import { nanoId } from '@db/fields/nanoId';
+import { nanoId } from '../../../db/fields/nanoId';
 
 export const users = pgTable('users', {
   id: nanoId('id').primaryKey(),

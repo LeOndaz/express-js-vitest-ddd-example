@@ -1,7 +1,7 @@
 import { pgTable, smallint, timestamp, unique, varchar } from 'drizzle-orm/pg-core';
-import { nanoId } from '@db/fields/nanoId';
-import { users } from '@auth/models/user';
-import { events } from '@events/models/event';
+import { nanoId } from '../../../db/fields/nanoId';
+import { users } from '../../auth/models/user';
+import { events } from './event';
 
 export const reservations = pgTable('reservations', {
   id: nanoId('id').primaryKey(),
