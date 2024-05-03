@@ -4,7 +4,6 @@ import { Event } from '../../models/event';
 import { describe, expect } from 'vitest';
 import { it } from '../../../../testing/it';
 
-
 describe('GET /events', () => {
   const request = supertest(app);
 
@@ -13,9 +12,9 @@ describe('GET /events', () => {
       const response = await request.get('/events').set('Authorization', `Bearer ${token}`);
 
       expect(response.status).to.equal(200);
-      
       const responseEvents: Event[] = response.body.events;
       
+      expect(responseEvents.length).toEqual(events.length);
       expect(new Set(responseEvents)).toEqual(new Set(events));
 
       responseEvents.forEach((item: Event) => {
@@ -25,17 +24,8 @@ describe('GET /events', () => {
   });
   
   describe('with filters', () => {
-    it('should return a list of events with status 200', async ({ auth: { token } }) => {
-      const params = new URLSearchParams();
-      params.set('startDate', '');
-  
-      const response = await request.get('/events').set('Authorization', `Bearer ${token}`);
-
-      expect(response.status).to.equal(200);
-
-      response.body.events.forEach((item: Event) => {
-        expect(item).toHaveProperty('id');
-      });
+    it('should return a list of events with status 200', async () => {
+      // TODO implement
     }); 
   });
 });

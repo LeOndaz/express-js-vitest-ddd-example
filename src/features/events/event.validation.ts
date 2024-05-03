@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-export type ListEventSchema = z.infer<typeof listEventsSchema>;
-export type ReserveTicketSchema = z.infer<typeof reserveTicketSchema>;
-export type CreateEventSchema = z.infer<typeof createEventSchema>;
+export type ListEventDto = z.infer<typeof listEventsSchema>;
+export type ReserveTicketDto = z.infer<typeof reserveTicketSchema>;
+export type CreateEventDto = z.infer<typeof createEventSchema>;
 
 const eventCategories = ['concert', 'conference', 'game'] as const;
 export const eventAttendeesMax: number = 1000;
@@ -32,8 +32,4 @@ export const createEventSchema = z.object({
   availableAttendeesCount: z.number().int().min(1).max(eventAttendeesMax),
   description: z.string().max(500),
   category: z.enum(eventCategories),
-});
-
-export const cancelReservationSchema = z.object({
-  reservationId: z.string(),
 });

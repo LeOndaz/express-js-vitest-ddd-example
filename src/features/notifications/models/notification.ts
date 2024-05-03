@@ -1,8 +1,8 @@
 
 import { pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
-import { nanoId } from '../../../db/fields/nanoId';
 import { events } from '../../events/models/event';
 import { users } from '../../auth/models/user';
+import { nanoId } from '../../../db/fields/nanoId';
 
 
 export const notifications = pgTable('notifications', {

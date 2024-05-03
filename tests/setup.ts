@@ -2,6 +2,8 @@ import { env } from '../src/common/env';
 import pg from 'pg';
 import { logger } from '../src/common/utils/logger';
 import { GlobalSetupContext } from 'vitest/node';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
 
 declare module 'vitest' {
   export interface ProvidedContext {
@@ -25,6 +27,11 @@ export default async function setup ({ provide }: GlobalSetupContext) {
   await client.connect();
   
   provide('testDB', testDbName);
+  
+  const db = drizzle(client);
+  await migrate(db, {
+    migrationsFolder: env.MIGRATIONS_DIR,
+  });
   
   logger.info(`conntected to ${testDbName}`);
 

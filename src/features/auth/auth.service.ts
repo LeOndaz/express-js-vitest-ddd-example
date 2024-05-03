@@ -1,7 +1,7 @@
 import { User, users } from './models/user';
 import { db } from '../../db';
 import { eq } from 'drizzle-orm';
-import { RegisterSchema } from './auth.validation';
+import { RegisterDto } from './auth.validation';
 import { checkUserPassword, hashPassword } from './auth.utils';
 import { tokens } from './models/token';
 import * as fns from 'date-fns';
@@ -30,7 +30,29 @@ export const getUserByEmail = async (email: string): Promise<User> => {
   return queryResult[0];
 };
 
-export const createUser = async (data: RegisterSchema): Promise<Omit<User, 'password'>> => {
+export const getUserById = async (id: string): Promise<User> => {
+  // TODO should abstract this + getObjectByX generally
+  const queryResult = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      password: users.password,
+      email: users.email,
+    })
+    .from(users)
+    .where(
+      eq(users.id, id),
+    )
+    .execute();
+
+  if (!queryResult[0]) {
+    throw new Error('user not found');
+  }
+
+  return queryResult[0];
+};
+
+export const createUser = async (data: RegisterDto): Promise<Omit<User, 'password'>> => {
   const existingUser = await getUserByEmail(data.email).catch(() => null);
   
   if (existingUser) {
@@ -89,9 +111,9 @@ export const validateToken = async (value: string) => {
   const [token] = queryResult;
 
   const { issuedAt } = token;
-  const expiresAt = fns.addMinutes(issuedAt, env.TOKEN_AGE_MINUTES);
-
-  if (issuedAt >= expiresAt) {
+  const endTimestamp = fns.addMinutes(issuedAt, env.TOKEN_AGE_MINUTES);
+  
+  if (new Date > endTimestamp) {
     throw new Error('expired token');
   }
 
@@ -128,18 +150,4 @@ export const setupAdminUser = async () => {
   } catch (e) {
     logger.log('admin already exists');
   }
-};
-
-export const getAdminUserWithToken = async () => {
-  const [ result] = await db
-    .select()
-    .from(users) // TODO: where admin
-    .where(eq(users.email, env.ADMIN_EMAIL))
-    .innerJoin(tokens, eq(tokens.userId, users.id))
-    .execute();
-
-  return {
-    user: result.users,
-    token: result.tokens,
-  };
 };

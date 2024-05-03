@@ -1,17 +1,17 @@
-import { CreateEventSchema, eventAttendeesMax, ListEventSchema, ReserveTicketSchema } from './/event.validation';
+import { CreateEventDto, eventAttendeesMax, ListEventDto, ReserveTicketDto } from './/event.validation';
 import { db } from './../../db';
 import { Event, events } from './models/event';
-import { and, between, eq, gte, lte } from 'drizzle-orm';
+import { and, between, eq, gte, lte, sum } from 'drizzle-orm';
 import { Reservation, reservations } from './models/reservation';
-import { users } from '../auth/models/user';
+import { User, users } from '../auth/models/user';
 
 interface ReserveTicketOpts {
   userId: string;
   eventId: string;
-  data: ReserveTicketSchema;
+  data: ReserveTicketDto;
 }
 // TODO pagination is not implemented
-export const getEvents = async (filters: ListEventSchema) => {
+export const getEvents = async (filters: ListEventDto) => {
   // TODO can be better
 
   const whereConditions = [];
@@ -55,7 +55,7 @@ export const getEvents = async (filters: ListEventSchema) => {
     .execute();
 };
 
-export const createEvent = async (data: CreateEventSchema): Promise<Event> => {
+export const createEvent = async (data: CreateEventDto): Promise<Event> => {
   const [event] = await db
     .insert(events)
     .values(data)
@@ -68,19 +68,28 @@ export const createEvent = async (data: CreateEventSchema): Promise<Event> => {
 export const reserveTicket = async (opts: ReserveTicketOpts): Promise<Reservation> => {
   const { data, userId, eventId } = opts;
   
-  const reservation = await getReservation(userId, eventId);
+  const existingReservation = await getReservation(userId, eventId);
   
-  if (reservation) {
-    if (reservation.attendeesCount === eventAttendeesMax) {
-      throw new Error(`an event has a maximum of ${eventAttendeesMax} attendees`);
-    }
-    
-    if (reservation.attendeesCount + data.attendeesCount > eventAttendeesMax) {
-      throw new Error(`only ${eventAttendeesMax - reservation.attendeesCount} seats are left`);
-    }
+  if (existingReservation) {
+    throw new Error(`user with id=${userId} already reserved event with id=${eventId}`);
+  }
+  
+  const [{ totalAttendees }] = await db
+    .select({
+      totalAttendees: sum(reservations.attendeesCount).mapWith(parseInt),
+    })
+    .from(reservations)
+    .where(
+      eq(reservations.eventId, opts.eventId),
+    )
+    .execute();
+  
+
+  if (data.attendeesCount + totalAttendees >= eventAttendeesMax) {
+    throw new Error(`only ${totalAttendees - data.attendeesCount} seats are left`);
   }
 
-  const results = await db
+  const [ reservation ] = await db
     .insert(reservations)
     .values({
       eventId,
@@ -90,7 +99,7 @@ export const reserveTicket = async (opts: ReserveTicketOpts): Promise<Reservatio
     .returning()
     .execute();
   
-  return results[0];
+  return reservation;
 };
 
 export const getReservation = async (userId:string, eventId: string): Promise<Reservation | null> => {
@@ -132,19 +141,15 @@ export const getBookedEvents = async (userId: string) => {
     .execute();
 };
 
-export const cancelReservation = async (reservationId: string) => {
+export const cancelReservation = async (user: User, eventId: string) => {
   return db
     .delete(reservations)
-    .where(eq(reservations.id, reservationId))
+    .where(
+      and(
+        eq(reservations.userId, user.id),
+        eq(reservations.eventId, eventId),
+      ),
+    )
     .returning()
-    .execute();
-};
-
-export const getReservations = async () => {
-  return db.
-    select(/* TODO should have the field explicitly */)
-    .from(reservations)
-    .innerJoin(events, eq(reservations.eventId, events.id))
-    .innerJoin(users, eq(reservations.userId, users.id))
     .execute();
 };

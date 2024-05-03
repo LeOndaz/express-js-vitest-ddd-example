@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { db } from '../db';
 import { User } from '../features/auth/models/user';
 import { Event, events } from '../features/events/models/event';
-import { getAdminUserWithToken } from '../features/auth/auth.service';
+import { getAdminUserWithToken } from './utils';
 
 interface Fixtures {
   auth: {
@@ -10,9 +10,6 @@ interface Fixtures {
     token: string;
   },
   events: Event[],
-  eventReservations: {
-    reservations: []
-  }
 }
 
 export const it = test.extend<Fixtures>({
@@ -28,7 +25,5 @@ export const it = test.extend<Fixtures>({
     const queryResult = await db.select().from(events);
     await use(queryResult);
   },
-  reservations: async ({}, use) => {
-    
-  },
+  // reservations: async ({}, use) => {},
 });

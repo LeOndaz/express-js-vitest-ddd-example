@@ -4,40 +4,27 @@ import { registerSchema, loginSchema } from './auth.validation';
 import { StatusCodes } from 'http-status-codes';
 import * as authService from './auth.service';
 import { logger } from '../../common/utils/logger';
-import { isApiError } from '../../common/utils/isApiError';
 
 export const router = Router();
 
 
-const registerUser: RequestHandler = async (req: TypedRequestBody<typeof registerSchema>, res) => {
+const registerUser: RequestHandler = async (req: TypedRequestBody<typeof registerSchema>, res, next) => {
   try {
     const user = await authService.createUser(req.body);
-    res.send({ user }).status(StatusCodes.CREATED);
-  } catch (e: unknown) {
-    // TODO: should be handled in middleware error handler
-    if (isApiError(e)) {
-      res.send({ error: e.message }).status(StatusCodes.FORBIDDEN);
-      return;
-    }
-    
+    res.status(StatusCodes.CREATED).send({ user });
+  } catch (e) {
     logger.error(e);
-    res.send({ error: 'unknown error has occcurred' }).status(StatusCodes.FORBIDDEN);
+    next(e);
   }
 };
 
-const loginUser: RequestHandler = async (req: TypedRequestBody<typeof loginSchema>, res) => {
+const loginUser: RequestHandler = async (req: TypedRequestBody<typeof loginSchema>, res, next) => {
   try {
     const token = await authService.login(req.body.email, req.body.password);
-    res.send({ token }).status(StatusCodes.OK);
-  } catch (e: unknown) {
-    // TODO: should be handled in middleware error handler
-    if (isApiError(e)) {
-      res.send({ error: e.message }).status(StatusCodes.FORBIDDEN);
-      return;
-    }
-
+    res.status(StatusCodes.OK).send({ token });
+  } catch (e) {
     logger.error(e);
-    res.send({ error: 'unknown error has occcurred' }).status(StatusCodes.FORBIDDEN);
+    next(e);
   }
 };
 

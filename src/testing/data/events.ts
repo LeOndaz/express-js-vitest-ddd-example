@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { EventInsert } from '../../features/events/models/event';
-import { ReservationInsert } from '../../features/events/models/reservation';
+// import { ReservationInsert } from '../../features/events/models/reservation';
 
 export const events: EventInsert[] = Array(50).map(() => ({
   name: faker.lorem.word(),
@@ -10,6 +10,4 @@ export const events: EventInsert[] = Array(50).map(() => ({
   date: faker.date.anytime().toDateString(),
 }));
 
-export const reservations: ReservationInsert[] = Array(100).map(() => ({
-    
-}));
+// export const reservations: ReservationInsert[] = Array(100).map(() => ({}));

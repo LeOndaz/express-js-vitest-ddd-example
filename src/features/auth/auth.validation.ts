@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-export type RegisterSchema = z.infer<typeof registerSchema>;
-export type LoginSchema = z.infer<typeof loginSchema>;
+export type RegisterDto = z.infer<typeof registerSchema>;
+export type LoginDto = z.infer<typeof loginSchema>;
 
 export const registerSchema = z.object({
   name: z.string().min(1).max(100),
