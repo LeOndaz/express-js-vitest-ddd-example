@@ -8,6 +8,7 @@
     "test": "cross-env NODE_ENV=test vitest",
     "build": "tsc && resolve-tspaths && cp .env ./dist",
     "migrate": "pnpm drizzle-kit generate:pg",
+    "lint": "eslint .",
     "dev": "cross-env NODE_ENV=dev nodemon src/index.ts",
     "start": "cross-env NODE_ENV=prod ts-node src/index.ts"
   },

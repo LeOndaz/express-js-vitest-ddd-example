@@ -28,7 +28,7 @@ export const sendEventNotifications = async () => {
     )
     .execute();
   
-  const notificationsData: NotificationInsert[] = unNotifiedReservations.map(({ eventId, userId, lastNotificationDate }) => {
+  const notificationsData: NotificationInsert[] = unNotifiedReservations.map(({ eventId, userId }) => {
     return {
       eventId,
       userId,

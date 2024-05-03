@@ -1,15 +1,16 @@
-import { CreateEventDto, eventAttendeesMax, ListEventDto, ReserveTicketDto } from './/event.validation';
+import {CreateEventDto, eventAttendeesMax, ListEventDto, ReserveTicketDto} from './/event.validation';
 import { db } from './../../db';
-import { Event, events } from './models/event';
-import { and, between, eq, gte, lte, sum } from 'drizzle-orm';
-import { Reservation, reservations } from './models/reservation';
-import { User, users } from '../auth/models/user';
+import {Event, events} from './models/event';
+import {and, between, eq, gte, lte, sum} from 'drizzle-orm';
+import {Reservation, reservations} from './models/reservation';
+import {User} from '../auth/models/user';
 
 interface ReserveTicketOpts {
   userId: string;
   eventId: string;
   data: ReserveTicketDto;
 }
+
 // TODO pagination is not implemented
 export const getEvents = async (filters: ListEventDto) => {
   // TODO can be better
@@ -25,7 +26,7 @@ export const getEvents = async (filters: ListEventDto) => {
   } else if (filters.endDate) {
     dateCondition = lte(events.date, filters.endDate);
   }
-  
+
   if (dateCondition) {
     whereConditions.push(dateCondition);
   }
@@ -40,7 +41,7 @@ export const getEvents = async (filters: ListEventDto) => {
 
   // TODO: I think drizzle does not support single object response, e.g (no .single() or .one())
   const where = whereConditions.length > 1 ? and(...whereConditions) : whereConditions[0];
-  
+
   return db
     .select({
       id: events.id,
@@ -61,20 +62,20 @@ export const createEvent = async (data: CreateEventDto): Promise<Event> => {
     .values(data)
     .returning()
     .execute();
-  
+
   return event;
 };
 
 export const reserveTicket = async (opts: ReserveTicketOpts): Promise<Reservation> => {
-  const { data, userId, eventId } = opts;
-  
+  const {data, userId, eventId} = opts;
+
   const existingReservation = await getReservation(userId, eventId);
-  
+
   if (existingReservation) {
     throw new Error(`user with id=${userId} already reserved event with id=${eventId}`);
   }
-  
-  const [{ totalAttendees }] = await db
+
+  const [{totalAttendees}] = await db
     .select({
       totalAttendees: sum(reservations.attendeesCount).mapWith(parseInt),
     })
@@ -83,13 +84,13 @@ export const reserveTicket = async (opts: ReserveTicketOpts): Promise<Reservatio
       eq(reservations.eventId, opts.eventId),
     )
     .execute();
-  
+
 
   if (data.attendeesCount + totalAttendees >= eventAttendeesMax) {
     throw new Error(`only ${totalAttendees - data.attendeesCount} seats are left`);
   }
 
-  const [ reservation ] = await db
+  const [reservation] = await db
     .insert(reservations)
     .values({
       eventId,
@@ -98,12 +99,12 @@ export const reserveTicket = async (opts: ReserveTicketOpts): Promise<Reservatio
     })
     .returning()
     .execute();
-  
+
   return reservation;
 };
 
-export const getReservation = async (userId:string, eventId: string): Promise<Reservation | null> => {
-  const [ reservation ] = await db
+export const getReservation = async (userId: string, eventId: string): Promise<Reservation | null> => {
+  const [reservation] = await db
     .select({
       id: reservations.id,
       eventId: reservations.eventId,
@@ -119,7 +120,7 @@ export const getReservation = async (userId:string, eventId: string): Promise<Re
       ),
     )
     .execute();
-  
+
   return reservation;
 };
 

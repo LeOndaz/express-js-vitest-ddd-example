@@ -33,6 +33,7 @@ This project uses DDD (Domain-driven design) and all features reside under `/src
 10. Database IDs are NanoIDs, for performance reasons, NanoID is sortable, URL-friendly, integer IDs expose the count of entities from the database and if used in URLs, they allow scrapers to iterate the website (throttling may help)
 
 ### Commands
+- `pnpm install` to install the dependencies
 - `pnpm dev` runs the dev version
 - `pnpm start` runs the prod version
 - `pnpm build` builds but doesn't run the project
@@ -42,3 +43,13 @@ This project uses DDD (Domain-driven design) and all features reside under `/src
 ### Run the project
 cd into the project dir & `docker-compose up`
 
+### App not building in docker? (using Apple M1? or for any other reason?)
+1. Run a Postgres instance with this command
+
+```bash
+docker run --name musalasoft_db -e POSTGRES_DB=musalasoft -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin -d postgres
+```
+
+2. Change `DATABASE_HOST` from `.env` to `localhost` instead of `database`
+3. run `pnpm install`
+4. run `pnpm dev`

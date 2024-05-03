@@ -31,7 +31,7 @@ target/
 .sts4-cache
 
 ### All IDEA BY JETBRAINS ###
-.idea
+../.idea
 *.iws
 *.iml
 *.ipr

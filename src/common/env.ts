@@ -14,10 +14,7 @@ export const env = z.object({
   DATABASE_USER: z.string().min(1),
   DATABASE_PASSWORD: z.string().min(1),
   DATABASE_NAME: z.string().min(1),
-  
-  REDIS_HOST: z.string().min(1),
-  REDIS_PORT: z.coerce.number(),
-  
+
   TOKEN_AGE_MINUTES: z.coerce.number().min(5),
 
   ADMIN_EMAIL: z.string().email(),
