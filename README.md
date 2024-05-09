@@ -1,5 +1,7 @@
 # Event Booking
 
+### In case of errors in Node version, use v18.18.2, this is because ts-node has some bugs, and same bugs exist across all alternatives (tsx for example), same applies for nodemon which internally uses ts-node
+
 [[_TOC_]]
 
 ---
